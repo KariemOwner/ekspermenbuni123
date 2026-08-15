@@ -69,6 +69,19 @@
             outline: none;
         }
 
+        #realtime-result {
+            width: 100%;
+            height: 25px;
+            font-size: 14px;
+            text-align: right;
+            color: #2ecc71;
+            margin-top: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 600;
+            min-height: 25px;
+        }
+
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -267,6 +280,7 @@
             <div class="display-container">
                 <div id="previous-display"></div>
                 <input type="text" id="display" readonly>
+                <div id="realtime-result"></div>
             </div>
             <div class="buttons">
                 <button class="clear" onclick="clearDisplay()">C</button>
@@ -312,6 +326,7 @@
     <script>
         const display = document.getElementById('display');
         const previousDisplay = document.getElementById('previous-display');
+        const realtimeResult = document.getElementById('realtime-result');
         const historyList = document.getElementById('history-list');
         
         let calculationHistory = [];
@@ -346,6 +361,7 @@
                 // Jika karakter terakhir adalah operator, ganti dengan operator baru
                 if (operators.includes(lastChar)) {
                     display.value = currentValue.slice(0, -1) + value;
+                    updateRealtimeResult();
                     return;
                 }
             }
@@ -365,11 +381,13 @@
             }
 
             display.value += value;
+            updateRealtimeResult();
         }
 
         function clearDisplay() {
             display.value = '';
             previousDisplay.textContent = '';
+            realtimeResult.textContent = '';
             lastResult = null;
             isNewCalculation = false;
         }
@@ -380,6 +398,7 @@
                 return;
             }
             display.value = display.value.slice(0, -1);
+            updateRealtimeResult();
         }
 
         function calculateResult() {
@@ -392,6 +411,7 @@
                     setTimeout(() => {
                         display.value = '';
                         previousDisplay.textContent = '';
+                        realtimeResult.textContent = '';
                     }, 1500);
                     return;
                 }
@@ -415,6 +435,7 @@
                 
                 // Update display dengan hasil
                 display.value = formattedResult;
+                realtimeResult.textContent = '';
                 lastResult = formattedResult;
                 isNewCalculation = true;
 
@@ -423,7 +444,54 @@
                 setTimeout(() => {
                     display.value = '';
                     previousDisplay.textContent = '';
+                    realtimeResult.textContent = '';
                 }, 1500);
+            }
+        }
+
+        function updateRealtimeResult() {
+            try {
+                let expression = display.value;
+                
+                // Jangan tampilkan hasil jika ekspresi kosong atau diakhiri dengan operator
+                if (!expression || operators.includes(expression.slice(-1))) {
+                    realtimeResult.textContent = '';
+                    return;
+                }
+
+                // Validasi ekspresi sebelum menghitung
+                // Cek apakah ekspresi valid untuk dihitung
+                const validPattern = /^[\d\.\+\-\*\/\(\)]+$/;
+                if (!validPattern.test(expression)) {
+                    realtimeResult.textContent = '';
+                    return;
+                }
+
+                // Cek keseimbangan kurung
+                const openParens = (expression.match(/\(/g) || []).length;
+                const closeParens = (expression.match(/\)/g) || []).length;
+                if (openParens !== closeParens) {
+                    realtimeResult.textContent = '';
+                    return;
+                }
+
+                // Hitung hasil sementara
+                const result = eval(expression);
+                
+                // Format hasil
+                let formattedResult;
+                if (Number.isInteger(result)) {
+                    formattedResult = result.toString();
+                } else {
+                    formattedResult = result.toFixed(8).replace(/\.?0+$/, '');
+                }
+
+                // Tampilkan hasil real-time
+                realtimeResult.textContent = '= ' + formattedResult;
+
+            } catch (error) {
+                // Jika ada error, kosongkan hasil real-time
+                realtimeResult.textContent = '';
             }
         }
 
@@ -460,6 +528,7 @@
             const item = calculationHistory[index];
             display.value = item.result;
             previousDisplay.textContent = item.expression + ' =';
+            realtimeResult.textContent = '';
             isNewCalculation = true;
         }
 
