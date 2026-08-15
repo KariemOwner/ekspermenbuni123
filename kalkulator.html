@@ -3,318 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Pro</title>
+    <title>Kalkulator Ilmiah Pro</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-        }
-
-        .container {
-            display: flex;
-            gap: 20px;
-            max-width: 900px;
-            width: 100%;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .calculator {
-            background: linear-gradient(145deg, #ffffff, #f0f0f0);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            width: 380px;
-        }
-
-        .display-container {
-            background: linear-gradient(145deg, #2c3e50, #34495e);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        #previous-display {
-            width: 100%;
-            height: 25px;
-            font-size: 14px;
-            text-align: right;
-            color: #95a5a6;
-            margin-bottom: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        #display {
-            width: 100%;
-            height: 60px;
-            font-size: 36px;
-            text-align: right;
-            background: transparent;
-            border: none;
-            color: #ecf0f1;
-            font-weight: bold;
-            outline: none;
-        }
-
-        #realtime-result {
-            width: 100%;
-            height: 25px;
-            font-size: 14px;
-            text-align: right;
-            color: #2ecc71;
-            margin-top: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 600;
-            min-height: 25px;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        button {
-            padding: 22px;
-            font-size: 20px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .number {
-            background: linear-gradient(145deg, #ecf0f1, #bdc3c7);
-            color: #2c3e50;
-        }
-
-        .number:hover {
-            background: linear-gradient(145deg, #bdc3c7, #ecf0f1);
-        }
-
-        .operator {
-            background: linear-gradient(145deg, #f39c12, #e67e22);
-            color: white;
-        }
-
-        .operator:hover {
-            background: linear-gradient(145deg, #e67e22, #f39c12);
-        }
-
-        .function {
-            background: linear-gradient(145deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .function:hover {
-            background: linear-gradient(145deg, #2980b9, #3498db);
-        }
-
-        .equals {
-            background: linear-gradient(145deg, #2ecc71, #27ae60);
-            color: white;
-            grid-column: span 2;
-        }
-
-        .equals:hover {
-            background: linear-gradient(145deg, #27ae60, #2ecc71);
-        }
-
-        .clear {
-            background: linear-gradient(145deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
-        .clear:hover {
-            background: linear-gradient(145deg, #c0392b, #e74c3c);
-        }
-
-        .backspace {
-            background: linear-gradient(145deg, #9b59b6, #8e44ad);
-            color: white;
-        }
-
-        .backspace:hover {
-            background: linear-gradient(145deg, #8e44ad, #9b59b6);
-        }
-
-        /* History Panel */
-        .history-panel {
-            background: linear-gradient(145deg, #ffffff, #f0f0f0);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            width: 300px;
-            max-height: 500px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #ecf0f1;
-        }
-
-        .history-header h3 {
-            color: #2c3e50;
-            font-size: 20px;
-        }
-
-        .clear-history {
-            padding: 8px 16px;
-            font-size: 14px;
-            background: linear-gradient(145deg, #e74c3c, #c0392b);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .clear-history:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .history-list {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .history-list::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .history-list::-webkit-scrollbar-track {
-            background: #ecf0f1;
-            border-radius: 10px;
-        }
-
-        .history-list::-webkit-scrollbar-thumb {
-            background: #bdc3c7;
-            border-radius: 10px;
-        }
-
-        .history-item {
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 4px solid #3498db;
-        }
-
-        .history-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .history-expression {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 5px;
-        }
-
-        .history-result {
-            font-size: 18px;
-            color: #2c3e50;
-            font-weight: bold;
-            text-align: right;
-        }
-
-        .no-history {
-            text-align: center;
-            color: #95a5a6;
-            padding: 40px 20px;
-            font-style: italic;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .history-panel {
-                width: 380px;
-                max-height: 300px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; }
+        .container { display: flex; gap: 20px; max-width: 1200px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .calculator { background: linear-gradient(145deg, #ffffff, #f0f0f0); border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); padding: 20px; width: 100%; max-width: 520px; }
+        .display-container { background: linear-gradient(145deg, #2c3e50, #34495e); border-radius: 15px; padding: 15px; margin-bottom: 12px; box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3); }
+        .mode-indicator { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .angle-mode { display: flex; gap: 5px; }
+        .angle-btn { padding: 4px 8px; font-size: 10px; border: none; border-radius: 4px; cursor: pointer; background: #34495e; color: #95a5a6; transition: all 0.2s; }
+        .angle-btn.active { background: #2ecc71; color: white; }
+        .memory-indicator { font-size: 12px; color: #f39c12; font-weight: bold; display: none; }
+        .memory-indicator.active { display: block; }
+        #previous-display { width: 100%; height: 20px; font-size: 12px; text-align: right; color: #95a5a6; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; }
+        #display { width: 100%; height: 50px; font-size: 28px; text-align: right; background: transparent; border: none; color: #ecf0f1; font-weight: bold; outline: none; }
+        #realtime-result { width: 100%; height: 20px; font-size: 12px; text-align: right; color: #2ecc71; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; font-weight: 600; min-height: 20px; }
+        .mode-toggle { display: flex; justify-content: center; margin-bottom: 10px; gap: 10px; }
+        .mode-toggle button { padding: 6px 14px; font-size: 12px; border: none; border-radius: 6px; cursor: pointer; background: #bdc3c7; color: #2c3e50; transition: all 0.2s; }
+        .mode-toggle button.active { background: #3498db; color: white; }
+        .scientific-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
+        .scientific-buttons.hidden { display: none; }
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        button { padding: 14px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15); }
+        button:active { transform: translateY(0); }
+        .number { background: linear-gradient(145deg, #ecf0f1, #bdc3c7); color: #2c3e50; }
+        .operator { background: linear-gradient(145deg, #f39c12, #e67e22); color: white; }
+        .function { background: linear-gradient(145deg, #3498db, #2980b9); color: white; }
+        .scientific { background: linear-gradient(145deg, #9b59b6, #8e44ad); color: white; padding: 10px; font-size: 12px; }
+        .memory { background: linear-gradient(145deg, #1abc9c, #16a085); color: white; padding: 10px; font-size: 11px; }
+        .equals { background: linear-gradient(145deg, #2ecc71, #27ae60); color: white; grid-column: span 2; }
+        .clear { background: linear-gradient(145deg, #e74c3c, #c0392b); color: white; }
+        .backspace { background: linear-gradient(145deg, #9b59b6, #8e44ad); color: white; }
+        .history-panel { background: linear-gradient(145deg, #ffffff, #f0f0f0); border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); padding: 20px; width: 300px; max-height: 520px; overflow: hidden; display: flex; flex-direction: column; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid #ecf0f1; }
+        .history-header h3 { color: #2c3e50; font-size: 18px; }
+        .clear-history { padding: 6px 12px; font-size: 12px; background: linear-gradient(145deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .history-list { flex: 1; overflow-y: auto; padding-right: 8px; }
+        .history-item { background: linear-gradient(145deg, #f8f9fa, #e9ecef); padding: 10px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; border-left: 4px solid #3498db; position: relative; }
+        .history-item:hover { transform: translateX(5px); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); }
+        .delete-history { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 3px 6px; font-size: 10px; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+        .history-item:hover .delete-history { opacity: 1; }
+        .history-expression { font-size: 12px; color: #7f8c8d; margin-bottom: 4px; padding-right: 30px; }
+        .history-result { font-size: 16px; color: #2c3e50; font-weight: bold; text-align: right; }
+        .no-history { text-align: center; color: #95a5a6; padding: 30px 15px; font-style: italic; }
+        @media (max-width: 900px) { .container { flex-direction: column; align-items: center; } .history-panel { width: 100%; max-width: 520px; max-height: 280px; } }
+        @media (max-width: 550px) { .calculator { padding: 12px; } button { padding: 12px; font-size: 14px; } .scientific { padding: 8px; font-size: 10px; } #display { font-size: 24px; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="calculator">
+            <div class="mode-toggle">
+                <button id="basic-mode-btn" class="active" onclick="setMode('basic')">Basic</button>
+                <button id="scientific-mode-btn" onclick="setMode('scientific')">Scientific</button>
+            </div>
             <div class="display-container">
+                <div class="mode-indicator">
+                    <div class="angle-mode">
+                        <button class="angle-btn active" id="deg-btn" onclick="setAngleMode('DEG')">DEG</button>
+                        <button class="angle-btn" id="rad-btn" onclick="setAngleMode('RAD')">RAD</button>
+                        <button class="angle-btn" id="grad-btn" onclick="setAngleMode('GRAD')">GRAD</button>
+                    </div>
+                    <span class="memory-indicator" id="memory-indicator">M</span>
+                </div>
                 <div id="previous-display"></div>
                 <input type="text" id="display" readonly>
                 <div id="realtime-result"></div>
             </div>
+            <div class="scientific-buttons hidden" id="scientific-buttons">
+                <button class="scientific" onclick="appendToDisplay('sin(')">sin</button>
+                <button class="scientific" onclick="appendToDisplay('cos(')">cos</button>
+                <button class="scientific" onclick="appendToDisplay('tan(')">tan</button>
+                <button class="scientific" onclick="appendToDisplay('log(')">log</button>
+                <button class="scientific" onclick="appendToDisplay('ln(')">ln</button>
+                <button class="scientific" onclick="appendToDisplay('asin(')">asin</button>
+                <button class="scientific" onclick="appendToDisplay('acos(')">acos</button>
+                <button class="scientific" onclick="appendToDisplay('atan(')">atan</button>
+                <button class="scientific" onclick="appendToDisplay('sinh(')">sinh</button>
+                <button class="scientific" onclick="appendToDisplay('cosh(')">cosh</button>
+                <button class="scientific" onclick="appendToDisplay('tanh(')">tanh</button>
+                <button class="scientific" onclick="appendToDisplay('asinh(')">asinh</button>
+                <button class="scientific" onclick="appendToDisplay('acosh(')">acosh</button>
+                <button class="scientific" onclick="appendToDisplay('atanh(')">atanh</button>
+                <button class="scientific" onclick="appendToDisplay('^')">x^y</button>
+                <button class="scientific" onclick="appendToDisplay('sqrt(')">sqrt</button>
+                <button class="scientific" onclick="appendToDisplay('cbrt(')">cbrt</button>
+                <button class="scientific" onclick="appendToDisplay('sq(')">x^2</button>
+                <button class="scientific" onclick="appendToDisplay('cb(')">x^3</button>
+                <button class="scientific" onclick="appendToDisplay('inv(')">1/x</button>
+                <button class="scientific" onclick="appendToDisplay('fact(')">n!</button>
+                <button class="scientific" onclick="insertNPr()">nPr</button>
+                <button class="scientific" onclick="insertNCr()">nCr</button>
+                <button class="scientific" onclick="appendToDisplay('abs(')">abs</button>
+                <button class="scientific" onclick="appendToDisplay(' mod ')">mod</button>
+                <button class="scientific" onclick="appendToDisplay('pi')">pi</button>
+                <button class="scientific" onclick="appendToDisplay('e')">e</button>
+                <button class="scientific" onclick="appendToDisplay('tau')">tau</button>
+                <button class="scientific" onclick="appendToDisplay('phi')">phi</button>
+                <button class="scientific" onclick="appendToDisplay('exp(')">exp</button>
+                <button class="scientific" onclick="appendToDisplay('10^(')">10^x</button>
+                <button class="scientific" onclick="appendToDisplay('floor(')">floor</button>
+                <button class="scientific" onclick="appendToDisplay('ceil(')">ceil</button>
+                <button class="scientific" onclick="toggleSign()">+/-</button>
+                <button class="scientific" onclick="appendToDisplay('Ans')">Ans</button>
+            </div>
+            <div class="scientific-buttons hidden" id="memory-buttons">
+                <button class="memory" onclick="memoryClear()">MC</button>
+                <button class="memory" onclick="memoryRecall()">MR</button>
+                <button class="memory" onclick="memoryAdd()">M+</button>
+                <button class="memory" onclick="memorySubtract()">M-</button>
+                <button class="memory" onclick="memoryStore()">MS</button>
+            </div>
             <div class="buttons">
-                <button class="clear" onclick="clearDisplay()">C</button>
-                <button class="backspace" onclick="backspace()">⌫</button>
+                <button class="clear" onclick="clearDisplay()">AC</button>
+                <button class="backspace" onclick="backspace()">DEL</button>
                 <button class="function" onclick="appendToDisplay('(')">(</button>
                 <button class="function" onclick="appendToDisplay(')')">)</button>
-                
                 <button class="number" onclick="appendToDisplay('7')">7</button>
                 <button class="number" onclick="appendToDisplay('8')">8</button>
                 <button class="number" onclick="appendToDisplay('9')">9</button>
-                <button class="operator" onclick="appendToDisplay('/')">÷</button>
-                
+                <button class="operator" onclick="appendToDisplay('/')">/</button>
                 <button class="number" onclick="appendToDisplay('4')">4</button>
                 <button class="number" onclick="appendToDisplay('5')">5</button>
                 <button class="number" onclick="appendToDisplay('6')">6</button>
-                <button class="operator" onclick="appendToDisplay('*')">×</button>
-                
+                <button class="operator" onclick="appendToDisplay('*')">*</button>
                 <button class="number" onclick="appendToDisplay('1')">1</button>
                 <button class="number" onclick="appendToDisplay('2')">2</button>
                 <button class="number" onclick="appendToDisplay('3')">3</button>
-                <button class="operator" onclick="appendToDisplay('-')">−</button>
-                
+                <button class="operator" onclick="appendToDisplay('-')">-</button>
                 <button class="number" onclick="appendToDisplay('0')">0</button>
                 <button class="number" onclick="appendToDisplay('.')">.</button>
                 <button class="number" onclick="appendToDisplay('00')">00</button>
                 <button class="operator" onclick="appendToDisplay('+')">+</button>
-                
+                <button class="function" onclick="appendToDisplay('%')">%</button>
                 <button class="equals" onclick="calculateResult()">=</button>
             </div>
         </div>
-
         <div class="history-panel">
             <div class="history-header">
-                <h3>📜 Riwayat</h3>
+                <h3>Riwayat</h3>
                 <button class="clear-history" onclick="clearHistory()">Hapus Semua</button>
             </div>
             <div class="history-list" id="history-list">
@@ -322,66 +151,118 @@
             </div>
         </div>
     </div>
-
     <script>
         const display = document.getElementById('display');
         const previousDisplay = document.getElementById('previous-display');
         const realtimeResult = document.getElementById('realtime-result');
         const historyList = document.getElementById('history-list');
-        
         let calculationHistory = [];
         let lastResult = null;
         let isNewCalculation = false;
-
-        // Operator yang diperbolehkan
+        let currentMode = 'basic';
+        let angleMode = 'DEG';
+        let memoryValue = 0;
         const operators = ['+', '-', '*', '/'];
+        const CONSTANTS = { pi: Math.PI, e: Math.E, tau: 2 * Math.PI, phi: (1 + Math.sqrt(5)) / 2 };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('basic-mode-btn').classList.toggle('active', mode === 'basic');
+            document.getElementById('scientific-mode-btn').classList.toggle('active', mode === 'scientific');
+            document.getElementById('scientific-buttons').classList.toggle('hidden', mode === 'basic');
+            document.getElementById('memory-buttons').classList.toggle('hidden', mode === 'basic');
+        }
+
+        function setAngleMode(mode) {
+            angleMode = mode;
+            document.getElementById('deg-btn').classList.toggle('active', mode === 'DEG');
+            document.getElementById('rad-btn').classList.toggle('active', mode === 'RAD');
+            document.getElementById('grad-btn').classList.toggle('active', mode === 'GRAD');
+        }
+
+        function updateMemoryIndicator() {
+            document.getElementById('memory-indicator').classList.toggle('active', memoryValue !== 0);
+        }
+
+        function toRadians(angle) {
+            if (angleMode === 'DEG') return angle * Math.PI / 180;
+            if (angleMode === 'GRAD') return angle * Math.PI / 200;
+            return angle;
+        }
+
+        function fromRadians(rad) {
+            if (angleMode === 'DEG') return rad * 180 / Math.PI;
+            if (angleMode === 'GRAD') return rad * 200 / Math.PI;
+            return rad;
+        }
+
+        function factorial(n) {
+            if (n < 0) throw new Error('Faktorial bilangan negatif tidak valid');
+            if (!Number.isInteger(n)) throw new Error('Faktorial hanya untuk bilangan bulat');
+            if (n > 170) throw new Error('Angka terlalu besar');
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) result *= i;
+            return result;
+        }
+
+        function nPr(n, r) {
+            if (r < 0 || n < 0) throw new Error('Nilai harus non-negatif');
+            if (r > n) throw new Error('r tidak boleh lebih besar dari n');
+            return factorial(n) / factorial(n - r);
+        }
+
+        function nCr(n, r) {
+            if (r < 0 || n < 0) throw new Error('Nilai harus non-negatif');
+            if (r > n) throw new Error('r tidak boleh lebih besar dari n');
+            return factorial(n) / (factorial(r) * factorial(n - r));
+        }
 
         function appendToDisplay(value) {
             const currentValue = display.value;
-
-            // Jika ini perhitungan baru setelah hasil, reset kecuali jika operator
-            if (isNewCalculation && !operators.includes(value)) {
+            if (isNewCalculation && !operators.includes(value) && value !== '^' && value !== ' mod ') {
                 display.value = '';
                 previousDisplay.textContent = '';
                 isNewCalculation = false;
-            } else if (isNewCalculation && operators.includes(value)) {
+            } else if (isNewCalculation && (operators.includes(value) || value === '^' || value === ' mod ')) {
                 isNewCalculation = false;
             }
-
-            // Mencegah spam operator (bug fix utama)
-            if (operators.includes(value)) {
-                // Jika display kosong dan bukan minus (untuk angka negatif)
-                if (currentValue === '' && value !== '-') {
-                    return;
-                }
-                
-                // Cek karakter terakhir
+            if (operators.includes(value) || value === '^' || value === ' mod ') {
+                if (currentValue === '' && value !== '-') return;
                 const lastChar = currentValue.slice(-1);
-                
-                // Jika karakter terakhir adalah operator, ganti dengan operator baru
-                if (operators.includes(lastChar)) {
-                    display.value = currentValue.slice(0, -1) + value;
+                if (operators.includes(lastChar) || lastChar === '^' || currentValue.endsWith(' mod ')) {
+                    if (value === ' mod ') {
+                        display.value = currentValue.replace(/ mod $/, '') + ' mod ';
+                    } else {
+                        display.value = currentValue.slice(0, -1) + value;
+                    }
                     updateRealtimeResult();
                     return;
                 }
             }
-
-            // Mencegah multiple decimal points dalam satu angka
             if (value === '.') {
-                const parts = currentValue.split(/[\+\-\*\/]/);
+                const parts = currentValue.split(/[+\-*/]/);
                 const currentPart = parts[parts.length - 1];
-                if (currentPart.includes('.')) {
-                    return;
-                }
+                if (currentPart.includes('.')) return;
             }
-
-            // Mencegah leading zeros
-            if (value === '0' && currentValue === '0') {
-                return;
-            }
-
+            if (value === '0' && currentValue === '0') return;
             display.value += value;
             updateRealtimeResult();
+        }
+
+        function insertNPr() { appendToDisplay(' nPr '); }
+        function insertNCr() { appendToDisplay(' nCr '); }
+
+        function toggleSign() {
+            let val = display.value;
+            if (!val) return;
+            const match = val.match(/(-?\d+\.?\d*)$/);
+            if (match) {
+                const num = parseFloat(match[1]);
+                const negated = -num;
+                display.value = val.slice(0, match.index) + negated;
+                updateRealtimeResult();
+            }
         }
 
         function clearDisplay() {
@@ -393,135 +274,110 @@
         }
 
         function backspace() {
-            if (isNewCalculation) {
-                clearDisplay();
-                return;
-            }
+            if (isNewCalculation) { clearDisplay(); return; }
             display.value = display.value.slice(0, -1);
             updateRealtimeResult();
+        }
+
+        function evaluateExpression(expr) {
+            expr = expr.replace(/\bpi\b/g, CONSTANTS.pi.toString());
+            expr = expr.replace(/\be\b(?![xp])/g, CONSTANTS.e.toString());
+            expr = expr.replace(/\btau\b/g, CONSTANTS.tau.toString());
+            expr = expr.replace(/\bphi\b/g, CONSTANTS.phi.toString());
+            expr = expr.replace(/\bAns\b/g, lastResult || '0');
+            expr = expr.replace(/\^/g, '**');
+            expr = expr.replace(/ mod /g, '%');
+            expr = expr.replace(/sin\(/g, 'Math.sin(toRadians(');
+            expr = expr.replace(/cos\(/g, 'Math.cos(toRadians(');
+            expr = expr.replace(/tan\(/g, 'Math.tan(toRadians(');
+            expr = expr.replace(/asin\(/g, 'fromRadians(Math.asin(');
+            expr = expr.replace(/acos\(/g, 'fromRadians(Math.acos(');
+            expr = expr.replace(/atan\(/g, 'fromRadians(Math.atan(');
+            expr = expr.replace(/sinh\(/g, 'Math.sinh(');
+            expr = expr.replace(/cosh\(/g, 'Math.cosh(');
+            expr = expr.replace(/tanh\(/g, 'Math.tanh(');
+            expr = expr.replace(/asinh\(/g, 'Math.asinh(');
+            expr = expr.replace(/acosh\(/g, 'Math.acosh(');
+            expr = expr.replace(/atanh\(/g, 'Math.atanh(');
+            expr = expr.replace(/log\(/g, 'Math.log10(');
+            expr = expr.replace(/ln\(/g, 'Math.log(');
+            expr = expr.replace(/exp\(/g, 'Math.exp(');
+            expr = expr.replace(/10\^\(/g, 'Math.pow(10,');
+            expr = expr.replace(/sqrt\(/g, 'Math.sqrt(');
+            expr = expr.replace(/cbrt\(/g, 'Math.cbrt(');
+            expr = expr.replace(/sq\(/g, 'Math.pow(');
+            expr = expr.replace(/cb\(/g, 'Math.pow(');
+            expr = expr.replace(/inv\(/g, '1/(');
+            expr = expr.replace(/abs\(/g, 'Math.abs(');
+            expr = expr.replace(/floor\(/g, 'Math.floor(');
+            expr = expr.replace(/ceil\(/g, 'Math.ceil(');
+            expr = expr.replace(/fact\(([^)]+)\)/g, 'factorial($1)');
+            expr = expr.replace(/(\d+(?:\.\d+)?)\s*nPr\s*(\d+(?:\.\d+)?)/g, 'nPr($1,$2)');
+            expr = expr.replace(/(\d+(?:\.\d+)?)\s*nCr\s*(\d+(?:\.\d+)?)/g, 'nCr($1,$2)');
+            expr = expr.replace(/Math\.pow\(([^,]+)\)/g, 'Math.pow($1,2)');
+            try {
+                const result = eval(expr);
+                if (!isFinite(result)) throw new Error('Hasil tidak terdefinisi');
+                if (isNaN(result)) throw new Error('Hasil NaN');
+                return result;
+            } catch (e) { throw e; }
+        }
+
+        function formatResult(result) {
+            if (Number.isInteger(result)) return result.toString();
+            if (Math.abs(result) < 1e-10 && result !== 0) return result.toExponential(6);
+            if (Math.abs(result) > 1e10) return result.toExponential(6);
+            const formatted = result.toFixed(10).replace(/\.?0+$/, '');
+            return formatted;
         }
 
         function calculateResult() {
             try {
                 let expression = display.value;
-                
-                // Validasi ekspresi
-                if (!expression || operators.includes(expression.slice(-1))) {
-                    display.value = 'Error';
-                    setTimeout(() => {
-                        display.value = '';
-                        previousDisplay.textContent = '';
-                        realtimeResult.textContent = '';
-                    }, 1500);
-                    return;
-                }
-
-                // Hitung hasil
-                const result = eval(expression);
-                
-                // Format hasil
-                let formattedResult;
-                if (Number.isInteger(result)) {
-                    formattedResult = result.toString();
-                } else {
-                    formattedResult = result.toFixed(8).replace(/\.?0+$/, '');
-                }
-
-                // Simpan ke history
+                if (!expression || operators.includes(expression.slice(-1))) { showError(); return; }
+                const result = evaluateExpression(expression);
+                const formattedResult = formatResult(result);
                 addToHistory(expression, formattedResult);
-
-                // Tampilkan di previous display
                 previousDisplay.textContent = expression + ' =';
-                
-                // Update display dengan hasil
                 display.value = formattedResult;
                 realtimeResult.textContent = '';
                 lastResult = formattedResult;
                 isNewCalculation = true;
+            } catch (error) { showError(); }
+        }
 
-            } catch (error) {
-                display.value = 'Error';
-                setTimeout(() => {
-                    display.value = '';
-                    previousDisplay.textContent = '';
-                    realtimeResult.textContent = '';
-                }, 1500);
-            }
+        function showError() {
+            display.value = 'Error';
+            setTimeout(() => { display.value = ''; previousDisplay.textContent = ''; realtimeResult.textContent = ''; }, 1500);
         }
 
         function updateRealtimeResult() {
             try {
                 let expression = display.value;
-                
-                // Jangan tampilkan hasil jika ekspresi kosong atau diakhiri dengan operator
-                if (!expression || operators.includes(expression.slice(-1))) {
-                    realtimeResult.textContent = '';
-                    return;
-                }
-
-                // Validasi ekspresi sebelum menghitung
-                // Cek apakah ekspresi valid untuk dihitung
-                const validPattern = /^[\d\.\+\-\*\/\(\)]+$/;
-                if (!validPattern.test(expression)) {
-                    realtimeResult.textContent = '';
-                    return;
-                }
-
-                // Cek keseimbangan kurung
+                if (!expression || operators.includes(expression.slice(-1))) { realtimeResult.textContent = ''; return; }
                 const openParens = (expression.match(/\(/g) || []).length;
                 const closeParens = (expression.match(/\)/g) || []).length;
-                if (openParens !== closeParens) {
-                    realtimeResult.textContent = '';
-                    return;
-                }
-
-                // Hitung hasil sementara
-                const result = eval(expression);
-                
-                // Format hasil
-                let formattedResult;
-                if (Number.isInteger(result)) {
-                    formattedResult = result.toString();
-                } else {
-                    formattedResult = result.toFixed(8).replace(/\.?0+$/, '');
-                }
-
-                // Tampilkan hasil real-time
+                if (openParens !== closeParens) { realtimeResult.textContent = ''; return; }
+                const result = evaluateExpression(expression);
+                const formattedResult = formatResult(result);
                 realtimeResult.textContent = '= ' + formattedResult;
-
-            } catch (error) {
-                // Jika ada error, kosongkan hasil real-time
-                realtimeResult.textContent = '';
-            }
+            } catch (error) { realtimeResult.textContent = ''; }
         }
 
         function addToHistory(expression, result) {
-            calculationHistory.unshift({
-                expression: expression,
-                result: result,
-                timestamp: new Date()
-            });
-
-            // Batasi history sampai 50 item
-            if (calculationHistory.length > 50) {
-                calculationHistory.pop();
-            }
-
+            calculationHistory.unshift({ expression: expression, result: result, timestamp: new Date() });
+            if (calculationHistory.length > 50) calculationHistory.pop();
             renderHistory();
         }
 
         function renderHistory() {
-            if (calculationHistory.length === 0) {
-                historyList.innerHTML = '<div class="no-history">Belum ada riwayat perhitungan</div>';
-                return;
-            }
-
-            historyList.innerHTML = calculationHistory.map((item, index) => `
-                <div class="history-item" onclick="loadFromHistory(${index})">
-                    <div class="history-expression">${item.expression}</div>
-                    <div class="history-result">= ${item.result}</div>
-                </div>
-            `).join('');
+            if (calculationHistory.length === 0) { historyList.innerHTML = '<div class="no-history">Belum ada riwayat perhitungan</div>'; return; }
+            historyList.innerHTML = calculationHistory.map((item, index) => 
+                '<div class="history-item" onclick="loadFromHistory(' + index + ')">' +
+                '<div class="history-expression">' + item.expression + '</div>' +
+                '<div class="history-result">= ' + item.result + '</div>' +
+                '<button class="delete-history" onclick="event.stopPropagation(); deleteHistory(' + index + ')">X</button></div>'
+            ).join('');
         }
 
         function loadFromHistory(index) {
@@ -532,31 +388,25 @@
             isNewCalculation = true;
         }
 
-        function clearHistory() {
-            calculationHistory = [];
-            renderHistory();
-        }
+        function deleteHistory(index) { calculationHistory.splice(index, 1); renderHistory(); }
+        function clearHistory() { calculationHistory = []; renderHistory(); }
 
-        // Keyboard support
+        function memoryClear() { memoryValue = 0; updateMemoryIndicator(); }
+        function memoryRecall() { display.value += memoryValue; updateRealtimeResult(); }
+        function memoryAdd() { try { const val = parseFloat(display.value) || evaluateExpression(display.value); memoryValue += val; updateMemoryIndicator(); } catch (e) {} }
+        function memorySubtract() { try { const val = parseFloat(display.value) || evaluateExpression(display.value); memoryValue -= val; updateMemoryIndicator(); } catch (e) {} }
+        function memoryStore() { try { memoryValue = parseFloat(display.value) || evaluateExpression(display.value); updateMemoryIndicator(); } catch (e) {} }
+
         document.addEventListener('keydown', function(event) {
             const key = event.key;
-            
-            if (key >= '0' && key <= '9') {
-                appendToDisplay(key);
-            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
-                appendToDisplay(key);
-            } else if (key === '.') {
-                appendToDisplay('.');
-            } else if (key === 'Enter' || key === '=') {
-                event.preventDefault();
-                calculateResult();
-            } else if (key === 'Backspace') {
-                backspace();
-            } else if (key === 'Escape' || key === 'c' || key === 'C') {
-                clearDisplay();
-            } else if (key === '(' || key === ')') {
-                appendToDisplay(key);
-            }
+            if (key >= '0' && key <= '9') appendToDisplay(key);
+            else if (key === '+' || key === '-' || key === '*' || key === '/') appendToDisplay(key);
+            else if (key === '.') appendToDisplay('.');
+            else if (key === 'Enter' || key === '=') { event.preventDefault(); calculateResult(); }
+            else if (key === 'Backspace') backspace();
+            else if (key === 'Escape' || key === 'c' || key === 'C') clearDisplay();
+            else if (key === '(' || key === ')') appendToDisplay(key);
+            else if (key === '^') appendToDisplay('^');
         });
     </script>
 </body>
