@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Scientific Modern</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .display {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .expression {
+            color: #a0a0a0;
+            font-size: 14px;
+            min-height: 20px;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+
+        .result {
+            color: #00ff88;
+            font-size: 32px;
+            font-weight: bold;
+            word-wrap: break-word;
+            min-height: 40px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-number {
+            background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+            color: #333;
+        }
+
+        .btn-operator {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-function {
+            background: linear-gradient(145deg, #4a5568, #2d3748);
+            color: white;
+            font-size: 14px;
+        }
+
+        .btn-clear {
+            background: linear-gradient(145deg, #fc8181, #f56565);
+            color: white;
+        }
+
+        .btn-equals {
+            background: linear-gradient(145deg, #48bb78, #38a169);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .mode-toggle label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .mode-toggle select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            background: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .history {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .history h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .history-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 450px) {
+            .calculator {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+            
+            .result {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="mode-toggle">
+            <label>Mode:</label>
+            <select id="angleMode">
+                <option value="deg">Derajat (°)</option>
+                <option value="rad">Radian</option>
+            </select>
+        </div>
+
+        <div class="display">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <div class="buttons">
+            <!-- Row 1: Scientific Functions -->
+            <button class="btn-function" onclick="addFunction('sin')">sin</button>
+            <button class="btn-function" onclick="addFunction('cos')">cos</button>
+            <button class="btn-function" onclick="addFunction('tan')">tan</button>
+            <button class="btn-clear" onclick="clearAll()">AC</button>
+            <button class="btn-clear" onclick="deleteChar()">⌫</button>
+
+            <!-- Row 2: More Functions -->
+            <button class="btn-function" onclick="addFunction('asin')">sin⁻¹</button>
+            <button class="btn-function" onclick="addFunction('acos')">cos⁻¹</button>
+            <button class="btn-function" onclick="addFunction('atan')">tan⁻¹</button>
+            <button class="btn-function" onclick="addConstant('pi')">π</button>
+            <button class="btn-operator" onclick="addOperator('/')">÷</button>
+
+            <!-- Row 3: More Functions & Numbers -->
+            <button class="btn-function" onclick="addFunction('sqrt')">√</button>
+            <button class="btn-function" onclick="addFunction('log')">log</button>
+            <button class="btn-function" onclick="addFunction('ln')">ln</button>
+            <button class="btn-number" onclick="addNumber('7')">7</button>
+            <button class="btn-operator" onclick="addOperator('*')">×</button>
+
+            <!-- Row 4: Powers & Numbers -->
+            <button class="btn-function" onclick="addOperator('^')">xʸ</button>
+            <button class="btn-function" onclick="addFunction('sq')">x²</button>
+            <button class="btn-function" onclick="addFunction('cb')">x³</button>
+            <button class="btn-number" onclick="addNumber('8')">8</button>
+            <button class="btn-operator" onclick="addOperator('-')">−</button>
+
+            <!-- Row 5: Numbers -->
+            <button class="btn-function" onclick="addParenthesis('(')">(</button>
+            <button class="btn-function" onclick="addParenthesis(')')">)</button>
+            <button class="btn-function" onclick="addFunction('fact')">n!</button>
+            <button class="btn-number" onclick="addNumber('9')">9</button>
+            <button class="btn-operator" onclick="addOperator('+')">+</button>
+
+            <!-- Row 6: Bottom Row -->
+            <button class="btn-function" onclick="addConstant('e')">e</button>
+            <button class="btn-number" onclick="addNumber('4')">4</button>
+            <button class="btn-number" onclick="addNumber('5')">5</button>
+            <button class="btn-number" onclick="addNumber('6')">6</button>
+            <button class="btn-equals" onclick="calculate()">=</button>
+
+            <!-- Row 7: Final Row -->
+            <button class="btn-function" onclick="toggleSign()">±</button>
+            <button class="btn-number" onclick="addNumber('1')">1</button>
+            <button class="btn-number" onclick="addNumber('2')">2</button>
+            <button class="btn-number" onclick="addNumber('3')">3</button>
+            <button class="btn-number" style="grid-column: span 2;" onclick="addNumber('0')">0</button>
+            
+            <!-- Row 8: Decimal -->
+            <button class="btn-number" style="grid-column: span 5;" onclick="addDecimal()">.</button>
+        </div>
+
+        <div class="history" id="history">
+            <h3>Riwayat</h3>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        let expression = '';
+        let currentResult = '0';
+        let history = [];
+        const angleMode = document.getElementById('angleMode');
+
+        function updateDisplay() {
+            document.getElementById('expression').textContent = expression || ' ';
+            document.getElementById('result').textContent = currentResult;
+        }
+
+        function addNumber(num) {
+            if (currentResult === 'Error' || currentResult === 'Infinity' || currentResult === '-Infinity') {
+                expression = '';
+            }
+            expression += num;
+            currentResult = evaluateExpression();
+            updateDisplay();
+        }
+
+        function addDecimal() {
+            const parts = expression.split(/[\+\-\*\/\^\(\)]/);
+            const lastPart = parts[parts.length - 1];
+            if (!lastPart.includes('.')) {
+                expression += '.';
+                currentResult = evaluateExpression();
+                updateDisplay();
+            }
+        }
+
+        function addOperator(op) {
+            const lastChar = expression.slice(-1);
+            if (['+', '-', '*', '/', '^'].includes(lastChar)) {
+                expression = expression.slice(0, -1) + op;
+            } else if (expression !== '') {
+                expression += op;
+            }
+            currentResult = evaluateExpression();
+            updateDisplay();
+        }
+
+        function addParenthesis(paren) {
+            expression += paren;
+            currentResult = evaluateExpression();
+            updateDisplay();
+        }
+
+        function addFunction(func) {
+            expression += func + '(';
+            currentResult = evaluateExpression();
+            updateDisplay();
+        }
+
+        function addConstant(constant) {
+            if (constant === 'pi') {
+                expression += 'π';
+            } else if (constant === 'e') {
+                expression += 'e';
+            }
+            currentResult = evaluateExpression();
+            updateDisplay();
+        }
+
+        function clearAll() {
+            expression = '';
+            currentResult = '0';
+            updateDisplay();
+        }
+
+        function deleteChar() {
+            expression = expression.slice(0, -1);
+            currentResult = evaluateExpression();
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            if (expression.startsWith('-')) {
+                expression = expression.slice(1);
+            } else if (expression !== '') {
+                expression = '-' + expression;
+            }
+            currentResult = evaluateExpression();
+            updateDisplay();
+        }
+
+        function factorial(n) {
+            if (n < 0) return NaN;
+            if (n === 0 || n === 1) return 1;
+            if (n > 170) return Infinity;
+            let result = 1;
+            for (let i = 2; i <= Math.floor(n); i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function toRadians(deg) {
+            return deg * (Math.PI / 180);
+        }
+
+        function toDegrees(rad) {
+            return rad * (180 / Math.PI);
+        }
+
+        function safeEvaluate(expr) {
+            try {
+                // Create a safe evaluation context
+                const scope = {
+                    sin: (x) => angleMode.value === 'deg' ? Math.sin(toRadians(x)) : Math.sin(x),
+                    cos: (x) => angleMode.value === 'deg' ? Math.cos(toRadians(x)) : Math.cos(x),
+                    tan: (x) => angleMode.value === 'deg' ? Math.tan(toRadians(x)) : Math.tan(x),
+                    asin: (x) => angleMode.value === 'deg' ? toDegrees(Math.asin(x)) : Math.asin(x),
+                    acos: (x) => angleMode.value === 'deg' ? toDegrees(Math.acos(x)) : Math.acos(x),
+                    atan: (x) => angleMode.value === 'deg' ? toDegrees(Math.atan(x)) : Math.atan(x),
+                    sqrt: Math.sqrt,
+                    log: Math.log10,
+                    ln: Math.log,
+                    sq: (x) => x * x,
+                    cb: (x) => x * x * x,
+                    fact: factorial,
+                    abs: Math.abs,
+                    π: Math.PI,
+                    e: Math.E
+                };
+
+                // Parse the expression
+                let parsedExpr = expr;
+                parsedExpr = parsedExpr.replace(/π/g, 'scope.π');
+                parsedExpr = parsedExpr.replace(/(?<![a-zA-Z])e(?![a-zA-Z0-9])/g, 'scope.e');
+
+                // Create function with scope
+                const keys = Object.keys(scope);
+                const values = Object.values(scope);
+                
+                const func = new Function(...keys, `return ${parsedExpr};`);
+                return func(...values);
+            } catch (error) {
+                throw new Error('Invalid expression');
+            }
+        }
+
+        function evaluateExpression() {
+            if (expression === '') return '0';
+            
+            try {
+                let result = safeEvaluate(expression);
+                
+                // Check for valid result
+                if (isNaN(result)) return 'Error';
+                if (!isFinite(result)) return result > 0 ? 'Infinity' : '-Infinity';
+                
+                // Round to avoid floating point errors
+                result = Math.round(result * 1e10) / 1e10;
+                
+                return result.toString();
+            } catch (error) {
+                return 'Error';
+            }
+        }
+
+        function calculate() {
+            if (expression === '') return;
+            
+            const result = evaluateExpression();
+            
+            if (result !== 'Error' && result !== 'Infinity' && result !== '-Infinity') {
+                // Add to history
+                history.unshift({
+                    expression: expression,
+                    result: result
+                });
+                
+                // Keep only last 10 items
+                if (history.length > 10) {
+                    history.pop();
+                }
+                
+                updateHistory();
+            }
+            
+            currentResult = result;
+            expression = '';
+            updateDisplay();
+        }
+
+        function updateHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = history.map(item => 
+                `<div class="history-item">${item.expression} = ${item.result}</div>`
+            ).join('');
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') addNumber(e.key);
+            else if (e.key === '.') addDecimal();
+            else if (['+', '-', '*', '/'].includes(e.key)) addOperator(e.key);
+            else if (e.key === '^') addOperator('^');
+            else if (e.key === '(' || e.key === ')') addParenthesis(e.key);
+            else if (e.key === 'Enter' || e.key === '=') calculate();
+            else if (e.key === 'Escape') clearAll();
+            else if (e.key === 'Backspace') deleteChar();
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
