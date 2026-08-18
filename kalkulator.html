@@ -308,16 +308,15 @@
             expr = expr.replace(/10\^\(/g, 'Math.pow(10,');
             expr = expr.replace(/sqrt\(/g, 'Math.sqrt(');
             expr = expr.replace(/cbrt\(/g, 'Math.cbrt(');
-            expr = expr.replace(/sq\(/g, 'Math.pow(');
-            expr = expr.replace(/cb\(/g, 'Math.pow(');
-            expr = expr.replace(/inv\(/g, '1/(');
+            expr = expr.replace(/sq\(([^)]+)\)/g, 'Math.pow($1,2)');
+            expr = expr.replace(/cb\(([^)]+)\)/g, 'Math.pow($1,3)');
+            expr = expr.replace(/inv\(([^)]+)\)/g, '1/($1)');
             expr = expr.replace(/abs\(/g, 'Math.abs(');
             expr = expr.replace(/floor\(/g, 'Math.floor(');
             expr = expr.replace(/ceil\(/g, 'Math.ceil(');
             expr = expr.replace(/fact\(([^)]+)\)/g, 'factorial($1)');
             expr = expr.replace(/(\d+(?:\.\d+)?)\s*nPr\s*(\d+(?:\.\d+)?)/g, 'nPr($1,$2)');
             expr = expr.replace(/(\d+(?:\.\d+)?)\s*nCr\s*(\d+(?:\.\d+)?)/g, 'nCr($1,$2)');
-            expr = expr.replace(/Math\.pow\(([^,]+)\)/g, 'Math.pow($1,2)');
             try {
                 const result = eval(expr);
                 if (!isFinite(result)) throw new Error('Hasil tidak terdefinisi');
