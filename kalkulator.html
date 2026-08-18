@@ -76,39 +76,39 @@
                 <div id="realtime-result"></div>
             </div>
             <div class="scientific-buttons hidden" id="scientific-buttons">
-                <button class="scientific" onclick="appendToDisplay('sin(')">sin</button>
-                <button class="scientific" onclick="appendToDisplay('cos(')">cos</button>
-                <button class="scientific" onclick="appendToDisplay('tan(')">tan</button>
-                <button class="scientific" onclick="appendToDisplay('log(')">log</button>
-                <button class="scientific" onclick="appendToDisplay('ln(')">ln</button>
-                <button class="scientific" onclick="appendToDisplay('asin(')">asin</button>
-                <button class="scientific" onclick="appendToDisplay('acos(')">acos</button>
-                <button class="scientific" onclick="appendToDisplay('atan(')">atan</button>
-                <button class="scientific" onclick="appendToDisplay('sinh(')">sinh</button>
-                <button class="scientific" onclick="appendToDisplay('cosh(')">cosh</button>
-                <button class="scientific" onclick="appendToDisplay('tanh(')">tanh</button>
-                <button class="scientific" onclick="appendToDisplay('asinh(')">asinh</button>
-                <button class="scientific" onclick="appendToDisplay('acosh(')">acosh</button>
-                <button class="scientific" onclick="appendToDisplay('atanh(')">atanh</button>
+                <button class="scientific" onclick="appendToDisplay('sin')">sin</button>
+                <button class="scientific" onclick="appendToDisplay('cos')">cos</button>
+                <button class="scientific" onclick="appendToDisplay('tan')">tan</button>
+                <button class="scientific" onclick="appendToDisplay('log')">log</button>
+                <button class="scientific" onclick="appendToDisplay('ln')">ln</button>
+                <button class="scientific" onclick="appendToDisplay('asin')">asin</button>
+                <button class="scientific" onclick="appendToDisplay('acos')">acos</button>
+                <button class="scientific" onclick="appendToDisplay('atan')">atan</button>
+                <button class="scientific" onclick="appendToDisplay('sinh')">sinh</button>
+                <button class="scientific" onclick="appendToDisplay('cosh')">cosh</button>
+                <button class="scientific" onclick="appendToDisplay('tanh')">tanh</button>
+                <button class="scientific" onclick="appendToDisplay('asinh')">asinh</button>
+                <button class="scientific" onclick="appendToDisplay('acosh')">acosh</button>
+                <button class="scientific" onclick="appendToDisplay('atanh')">atanh</button>
                 <button class="scientific" onclick="appendToDisplay('^')">x^y</button>
-                <button class="scientific" onclick="appendToDisplay('sqrt(')">sqrt</button>
-                <button class="scientific" onclick="appendToDisplay('cbrt(')">cbrt</button>
-                <button class="scientific" onclick="appendToDisplay('sq(')">x^2</button>
-                <button class="scientific" onclick="appendToDisplay('cb(')">x^3</button>
-                <button class="scientific" onclick="appendToDisplay('inv(')">1/x</button>
-                <button class="scientific" onclick="appendToDisplay('fact(')">n!</button>
+                <button class="scientific" onclick="appendToDisplay('sqrt')">sqrt</button>
+                <button class="scientific" onclick="appendToDisplay('cbrt')">cbrt</button>
+                <button class="scientific" onclick="appendToDisplay('sq')">x^2</button>
+                <button class="scientific" onclick="appendToDisplay('cb')">x^3</button>
+                <button class="scientific" onclick="appendToDisplay('inv')">1/x</button>
+                <button class="scientific" onclick="appendToDisplay('fact')">n!</button>
                 <button class="scientific" onclick="insertNPr()">nPr</button>
                 <button class="scientific" onclick="insertNCr()">nCr</button>
-                <button class="scientific" onclick="appendToDisplay('abs(')">abs</button>
+                <button class="scientific" onclick="appendToDisplay('abs')">abs</button>
                 <button class="scientific" onclick="appendToDisplay(' mod ')">mod</button>
                 <button class="scientific" onclick="appendToDisplay('pi')">pi</button>
                 <button class="scientific" onclick="appendToDisplay('e')">e</button>
                 <button class="scientific" onclick="appendToDisplay('tau')">tau</button>
                 <button class="scientific" onclick="appendToDisplay('phi')">phi</button>
-                <button class="scientific" onclick="appendToDisplay('exp(')">exp</button>
-                <button class="scientific" onclick="appendToDisplay('10^(')">10^x</button>
-                <button class="scientific" onclick="appendToDisplay('floor(')">floor</button>
-                <button class="scientific" onclick="appendToDisplay('ceil(')">ceil</button>
+                <button class="scientific" onclick="appendToDisplay('exp')">exp</button>
+                <button class="scientific" onclick="appendToDisplay('10^')">10^x</button>
+                <button class="scientific" onclick="appendToDisplay('floor')">floor</button>
+                <button class="scientific" onclick="appendToDisplay('ceil')">ceil</button>
                 <button class="scientific" onclick="toggleSign()">+/-</button>
                 <button class="scientific" onclick="appendToDisplay('Ans')">Ans</button>
             </div>
@@ -249,6 +249,29 @@
                 if (currentPart.includes('.')) return;
             }
             if (value === '0' && currentValue === '0') return;
+            
+            // Handle functions that need automatic parenthesis handling
+            const functionsWithParens = ['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'log', 'ln', 'sqrt', 'cbrt', 'abs', 'floor', 'ceil'];
+            if (functionsWithParens.includes(value)) {
+                display.value += value + '(';
+                updateRealtimeResult();
+                return;
+            }
+            
+            // Handle special functions: sq, cb, inv, fact
+            if (value === 'sq' || value === 'cb' || value === 'inv' || value === 'fact') {
+                display.value += value + '(';
+                updateRealtimeResult();
+                return;
+            }
+            
+            // Handle 10^ and exp
+            if (value === '10^' || value === 'exp') {
+                display.value += value + '(';
+                updateRealtimeResult();
+                return;
+            }
+            
             display.value += value;
             updateRealtimeResult();
         }
