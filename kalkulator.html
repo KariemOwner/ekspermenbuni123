@@ -313,31 +313,68 @@
             expr = expr.replace(/\bAns\b/g, lastResult || '0');
             expr = expr.replace(/\^/g, '**');
             expr = expr.replace(/ mod /g, '%');
-            expr = expr.replace(/sin\(/g, 'Math.sin(toRadians(');
-            expr = expr.replace(/cos\(/g, 'Math.cos(toRadians(');
-            expr = expr.replace(/tan\(/g, 'Math.tan(toRadians(');
-            expr = expr.replace(/asin\(/g, 'fromRadians(Math.asin(');
-            expr = expr.replace(/acos\(/g, 'fromRadians(Math.acos(');
-            expr = expr.replace(/atan\(/g, 'fromRadians(Math.atan(');
-            expr = expr.replace(/sinh\(/g, 'Math.sinh(');
-            expr = expr.replace(/cosh\(/g, 'Math.cosh(');
-            expr = expr.replace(/tanh\(/g, 'Math.tanh(');
-            expr = expr.replace(/asinh\(/g, 'Math.asinh(');
-            expr = expr.replace(/acosh\(/g, 'Math.acosh(');
-            expr = expr.replace(/atanh\(/g, 'Math.atanh(');
-            expr = expr.replace(/log\(/g, 'Math.log10(');
-            expr = expr.replace(/ln\(/g, 'Math.log(');
-            expr = expr.replace(/exp\(/g, 'Math.exp(');
-            expr = expr.replace(/10\^\(/g, 'Math.pow(10,');
-            expr = expr.replace(/sqrt\(/g, 'Math.sqrt(');
-            expr = expr.replace(/cbrt\(/g, 'Math.cbrt(');
-            expr = expr.replace(/sq\(([^)]+)\)/g, 'Math.pow($1,2)');
-            expr = expr.replace(/cb\(([^)]+)\)/g, 'Math.pow($1,3)');
-            expr = expr.replace(/inv\(([^)]+)\)/g, '1/($1)');
-            expr = expr.replace(/abs\(/g, 'Math.abs(');
-            expr = expr.replace(/floor\(/g, 'Math.floor(');
-            expr = expr.replace(/ceil\(/g, 'Math.ceil(');
-            expr = expr.replace(/fact\(([^)]+)\)/g, 'factorial($1)');
+            
+            // Handle functions with balanced parentheses using a helper
+            function replaceFunctionWithParens(expr, funcName, replacement) {
+                let result = expr;
+                const pattern = new RegExp(funcName + '\\(', 'g');
+                let match;
+                let positions = [];
+                while ((match = pattern.exec(result)) !== null) {
+                    positions.push(match.index);
+                }
+                for (let i = positions.length - 1; i >= 0; i--) {
+                    const startIdx = positions[i];
+                    let parenCount = 0;
+                    let argStart = startIdx + funcName.length + 1;
+                    let argEnd = argStart;
+                    for (let j = argStart; j < result.length; j++) {
+                        if (result[j] === '(') parenCount++;
+                        else if (result[j] === ')') {
+                            if (parenCount === 0) { argEnd = j; break; }
+                            parenCount--;
+                        }
+                    }
+                    const argContent = result.substring(argStart, argEnd);
+                    const replaced = replacement.replace('$1', argContent);
+                    result = result.substring(0, startIdx) + replaced + result.substring(argEnd + 1);
+                }
+                return result;
+            }
+            
+            // Handle inverse trig functions first (they need fromRadians wrapper)
+            expr = replaceFunctionWithParens(expr, 'asin', 'fromRadians(Math.asin($1))');
+            expr = replaceFunctionWithParens(expr, 'acos', 'fromRadians(Math.acos($1))');
+            expr = replaceFunctionWithParens(expr, 'atan', 'fromRadians(Math.atan($1))');
+            expr = replaceFunctionWithParens(expr, 'asinh', 'Math.asinh($1)');
+            expr = replaceFunctionWithParens(expr, 'acosh', 'Math.acosh($1)');
+            expr = replaceFunctionWithParens(expr, 'atanh', 'Math.atanh($1)');
+            
+            // Handle regular trig functions (they need toRadians wrapper)
+            expr = replaceFunctionWithParens(expr, 'sin', 'Math.sin(toRadians($1))');
+            expr = replaceFunctionWithParens(expr, 'cos', 'Math.cos(toRadians($1))');
+            expr = replaceFunctionWithParens(expr, 'tan', 'Math.tan(toRadians($1))');
+            expr = replaceFunctionWithParens(expr, 'sinh', 'Math.sinh($1)');
+            expr = replaceFunctionWithParens(expr, 'cosh', 'Math.cosh($1)');
+            expr = replaceFunctionWithParens(expr, 'tanh', 'Math.tanh($1)');
+            
+            // Handle log functions
+            expr = replaceFunctionWithParens(expr, 'log', 'Math.log10($1)');
+            expr = replaceFunctionWithParens(expr, 'ln', 'Math.log($1)');
+            expr = replaceFunctionWithParens(expr, 'exp', 'Math.exp($1)');
+            expr = replaceFunctionWithParens(expr, '10^', 'Math.pow(10,$1)');
+            
+            // Handle root and other math functions
+            expr = replaceFunctionWithParens(expr, 'sqrt', 'Math.sqrt($1)');
+            expr = replaceFunctionWithParens(expr, 'cbrt', 'Math.cbrt($1)');
+            expr = replaceFunctionWithParens(expr, 'sq', 'Math.pow($1,2)');
+            expr = replaceFunctionWithParens(expr, 'cb', 'Math.pow($1,3)');
+            expr = replaceFunctionWithParens(expr, 'inv', '1/($1)');
+            expr = replaceFunctionWithParens(expr, 'abs', 'Math.abs($1)');
+            expr = replaceFunctionWithParens(expr, 'floor', 'Math.floor($1)');
+            expr = replaceFunctionWithParens(expr, 'ceil', 'Math.ceil($1)');
+            expr = replaceFunctionWithParens(expr, 'fact', 'factorial($1)');
+            
             expr = expr.replace(/(\d+(?:\.\d+)?)\s*nPr\s*(\d+(?:\.\d+)?)/g, 'nPr($1,$2)');
             expr = expr.replace(/(\d+(?:\.\d+)?)\s*nCr\s*(\d+(?:\.\d+)?)/g, 'nCr($1,$2)');
             try {
